@@ -107,7 +107,11 @@ def get_request(request_str: str) -> dict:
 
   retry_num = 0
   while retry_num < MAX_RETRIES:
-    result = requests.get(SSL_LABS_BASE_URL + request_str)
+    try:
+      result = requests.get(SSL_LABS_BASE_URL + request_str)
+    except requests.exceptions.ConnectionError as e:
+      print(f"Unable to connect to remote server with error {e}.")
+      print(f"Sleeping {sleep_time} seconds and trying again")
     if result.status_code == 200:
       return result.json()
     
